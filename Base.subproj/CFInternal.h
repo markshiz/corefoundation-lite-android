@@ -253,16 +253,16 @@ struct CF_CONST_STRING {
 
 extern int __CFConstantStringClassReference[];
 
-#if defined(__ppc__)
+#if __BIG_ENDIAN__ 
 #define CONST_STRING_DECL(S, V)			\
 static struct CF_CONST_STRING __ ## S ## __ = {{&__CFConstantStringClassReference, 0x0000, 0x07c8}, V, sizeof(V) - 1}; \
 const CFStringRef S = (CFStringRef) & __ ## S ## __;
-#elif defined(__i386__)
+#elif __LITTLE_ENDIAN__ 
 #define CONST_STRING_DECL(S, V)			\
 static struct CF_CONST_STRING __ ## S ## __ = {{&__CFConstantStringClassReference, 0x07c8, 0x0000}, V, sizeof(V) - 1}; \
 const CFStringRef S = (CFStringRef) & __ ## S ## __;
 #else
-#error undefined architecture
+#error undefined endian
 #endif
 #endif
 

@@ -155,48 +155,60 @@ static CFMutableArrayRef __CFCopyRecursiveDirectoryList(const char *topDir) {
     }
     dirge = malloc(8192);
     result = CFArrayCreateMutable(kCFAllocatorDefault, 0, &kCFTypeArrayCallBacks);
+#if defined(__ANDROID__)
+    numread = getdents(fd, (struct dirent*)dirge, 8192);
+#else
     numread = getdirentries(fd, dirge, 8192, &basep);
+#endif
     while (0 < numread) {
-	struct dirent *dent = (struct dirent *)dirge;
-	for (; dent < (struct dirent *)(dirge + numread); dent = (struct dirent *)((char *)dent + dent->d_reclen)) {
-            if (0 == dent->d_fileno) continue;
-	    if (1 == dentDNameLen && '.' == dent->d_name[0]) continue;
-	    if (2 == dentDNameLen && '.' == dent->d_name[0] && '.' == dent->d_name[1]) continue;
-            if (dent->d_type == DT_UNKNOWN) {
-		struct stat statbuf;
-		strcpy(path, topDir);
-		strcat(path, "/");
-		plen = strlen(path);
-		memmove(path + plen, dent->d_name, dentDNameLen);
-		path[plen + dentDNameLen] = '\0';
-		if (0 <= stat(path, &statbuf) && (statbuf.st_mode & S_IFMT) == S_IFDIR) {
-		    dent->d_type = DT_DIR;
-		}
+      struct dirent *dent = (struct dirent *)dirge;
+      for (; dent < (struct dirent *)(dirge + numread); dent = (struct dirent *)((char *)dent + dent->d_reclen)) {
+#if defined(__ANDROID__)
+        if (0 == dent->d_ino) continue;
+#else
+        if (0 == dent->d_fileno) continue;
+#endif
+        if (1 == dentDNameLen && '.' == dent->d_name[0]) continue;
+        if (2 == dentDNameLen && '.' == dent->d_name[0] && '.' == dent->d_name[1]) continue;
+        if (dent->d_type == DT_UNKNOWN) {
+          struct stat statbuf;
+          strcpy(path, topDir);
+          strcat(path, "/");
+          plen = strlen(path);
+          memmove(path + plen, dent->d_name, dentDNameLen);
+          path[plen + dentDNameLen] = '\0';
+          if (0 <= stat(path, &statbuf) && (statbuf.st_mode & S_IFMT) == S_IFDIR) {
+              dent->d_type = DT_DIR;
+          }
 	    }
-            if (DT_DIR == dent->d_type) {
-		strcpy(path, topDir);
-		strcat(path, "/");
-		plen = strlen(path);
-		memmove(path + plen, dent->d_name, dentDNameLen);
-		path[plen + dentDNameLen] = '\0';
-		temp = __CFCopyRecursiveDirectoryList(path);
-		for (idx = 0, cnt = CFArrayGetCount(temp); idx < cnt; idx++) {
-		    CFStringRef string, item = CFArrayGetValueAtIndex(temp, idx);
-		    memmove(path, dent->d_name, dentDNameLen);
-		    path[dentDNameLen] = '/';
-		    CFStringGetBytes(item, CFRangeMake(0, CFStringGetLength(item)), kCFStringEncodingUTF8, 0, false, path + dentDNameLen + 1, CFMaxPathLength - dentDNameLen - 2, &usedLen);
-		    string = CFStringCreateWithBytes(kCFAllocatorDefault, path, dentDNameLen + 1 + usedLen, kCFStringEncodingUTF8, false);
-		    CFArrayAppendValue(result, string);
-		    CFRelease(string);
-		}
-		CFRelease(temp);
-            } else {
-		CFStringRef string = CFStringCreateWithBytes(kCFAllocatorDefault, dent->d_name, dentDNameLen, kCFStringEncodingUTF8, false);
-		CFArrayAppendValue(result, string);
-		CFRelease(string);
-            }
-	}
+        if (DT_DIR == dent->d_type) {
+          strcpy(path, topDir);
+          strcat(path, "/");
+          plen = strlen(path);
+          memmove(path + plen, dent->d_name, dentDNameLen);
+          path[plen + dentDNameLen] = '\0';
+          temp = __CFCopyRecursiveDirectoryList(path);
+          for (idx = 0, cnt = CFArrayGetCount(temp); idx < cnt; idx++) {
+              CFStringRef string, item = CFArrayGetValueAtIndex(temp, idx);
+              memmove(path, dent->d_name, dentDNameLen);
+              path[dentDNameLen] = '/';
+              CFStringGetBytes(item, CFRangeMake(0, CFStringGetLength(item)), kCFStringEncodingUTF8, 0, false, path + dentDNameLen + 1, CFMaxPathLength - dentDNameLen - 2, &usedLen);
+              string = CFStringCreateWithBytes(kCFAllocatorDefault, path, dentDNameLen + 1 + usedLen, kCFStringEncodingUTF8, false);
+              CFArrayAppendValue(result, string);
+              CFRelease(string);
+          }
+          CFRelease(temp);
+        } else {
+          CFStringRef string = CFStringCreateWithBytes(kCFAllocatorDefault, dent->d_name, dentDNameLen, kCFStringEncodingUTF8, false);
+          CFArrayAppendValue(result, string);
+          CFRelease(string);
+      }
+  }
+#if defined(__ANDROID__)
+  numread = getdents(fd, (struct dirent*)dirge, 8192);
+#else
 	numread = getdirentries(fd, dirge, 8192, &basep);
+#endif
     }
     close(fd);
     free(dirge);

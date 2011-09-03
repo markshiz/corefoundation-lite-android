@@ -209,11 +209,19 @@ static CFArrayRef _CFBundleCopyDirectoryContentsAtPath(CFStringRef path, Boolean
             fd = open(cpathBuff, O_RDONLY, 0777);
         }
         if (fd >= 0) {
+#if defined(__ANDROID__)
+            while ((numread = getdents(fd, (struct dirent*)dirge, sizeof(dirge))) > 0) {
+#else
             while ((numread = getdirentries(fd, dirge, sizeof(dirge), &basep)) > 0) {
+#endif 
                 struct dirent *dent;
                 for (dent = (struct dirent *)dirge; dent < (struct dirent *)(dirge + numread); dent = (struct dirent *)((char *)dent + dent->d_reclen)) {
                     CFIndex nameLen = strlen(dent->d_name);
+#if defined(__ANDROID__) 
+                    if (0 == dent->d_ino || (dent->d_name[0] == '.' && (nameLen == 1 || (nameLen == 2 && dent->d_name[1] == '.')))) continue;
+#else
                     if (0 == dent->d_fileno || (dent->d_name[0] == '.' && (nameLen == 1 || (nameLen == 2 && dent->d_name[1] == '.')))) continue;
+#endif
                     name = CFStringCreateWithCString(NULL, dent->d_name, CFStringFileSystemEncoding());
                     if (NULL != name) {
                         CFArrayAppendValue(contents, name);

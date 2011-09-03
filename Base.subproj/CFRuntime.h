@@ -157,23 +157,23 @@ CF_EXPORT void _CFRuntimeUnregisterClassWithTypeID(CFTypeID typeID);
  */
 typedef struct __CFRuntimeBase {
     void *_isa;
-#if defined(__ppc__)
+#if defined(__BIG_ENDIAN__) 
     uint16_t _rc;
     uint16_t _info;
-#elif defined(__i386__)
+#elif defined(__LITTLE_ENDIAN__)
     uint16_t _info;
     uint16_t _rc;
 #else
-#error unknown architecture
+#error unknown endian
 #endif
 } CFRuntimeBase;
 
-#if defined(__ppc__)
+#if defined(__BIG_ENDIAN__)
 #define INIT_CFRUNTIME_BASE(isa, info, rc)	{ isa, info, rc }
-#elif defined(__i386__)
+#elif defined(__LITTLE_ENDIAN__)
 #define INIT_CFRUNTIME_BASE(isa, info, rc)	{ isa, rc, info }
 #elif
-#error unknown architecture
+#error unknown endian
 #endif
 
 CF_EXPORT CFTypeRef _CFRuntimeCreateInstance(CFAllocatorRef allocator, CFTypeID typeID, uint32_t extraBytes, unsigned char *category);

@@ -172,7 +172,7 @@ typedef struct __CFRuntimeBase {
 #define INIT_CFRUNTIME_BASE(isa, info, rc)	{ isa, info, rc }
 #elif defined(__LITTLE_ENDIAN__)
 #define INIT_CFRUNTIME_BASE(isa, info, rc)	{ isa, rc, info }
-#elif
+#else
 #error unknown endian
 #endif
 

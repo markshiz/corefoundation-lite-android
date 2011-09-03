@@ -21,6 +21,7 @@ void readPropertyListFromFile( void ) {
   FILE *file = fopen( kFilename, "r" );
 
   if ( file != NULL ) {
+    printf("file opened");
     int result = fseek( file, 0, SEEK_END );
     result = ftell( file );
     rewind( file );
@@ -29,6 +30,7 @@ void readPropertyListFromFile( void ) {
 
     if ( buffer != NULL ) {
       if ( fread( buffer, result, 1, file ) > 0 ) {
+	printf("buffer read");
 	data = CFDataCreate( NULL, buffer, result );
       }
 
@@ -46,5 +48,7 @@ void readPropertyListFromFile( void ) {
     CFShow( propertyList );
   }
 
-  CFRelease( data );
+  if ( data ) {
+      CFRelease( data );
+  }
 }

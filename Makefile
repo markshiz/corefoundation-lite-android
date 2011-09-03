@@ -35,7 +35,7 @@ PLATFORM_CFLAGS = -D__MACH__=1 -fconstant-cfstrings
 endif
 
 ifeq "$(PLATFORM)" "Linux"
-PLATFORM_CFLAGS = -D__LINUX__=1 -DCOMPATIBLE_GCC4=1 -D__STDC_VERSION__=199901L
+PLATFORM_CFLAGS =  -m32 -D__LINUX__=1 -DCOMPATIBLE_GCC4=1 -D__STDC_VERSION__=199901L -D__LITTLE_ENDIAN__
 endif
 
 ifeq "$(PLATFORM)" "FreeBSD"
@@ -114,8 +114,8 @@ CHMOD = /bin/chmod
 CHOWN = /bin/chown
 TAR = /usr/bin/tar
 STRIP = /usr/bin/strip
-USER = dccote
-GROUP = dccote
+USER = root
+GROUP = wheel
 endif
 
 ifeq "$(PLATFORM)" "Darwin"

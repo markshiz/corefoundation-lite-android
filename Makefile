@@ -1,3 +1,22 @@
+#
+# "Portions Copyright (c) 1999-2003 Apple Computer, Inc. All Rights
+# Reserved.
+#
+# This file contains Original Code and/or Modifications of Original Code
+# as defined in and that are subject to the Apple Public Source License
+# Version 2.0 (the 'License'). You may not use this file except in
+# compliance with the License. Please obtain a copy of the License at
+# http://www.opensource.apple.com/apsl/ and read it before using this
+# file.
+
+# The Original Code and all software distributed under the License are
+# distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+# EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
+# INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR NON-INFRINGEMENT.
+# Please see the License for the specific language governing rights and
+# limitations under the License."
+# 
 # Simple makefile for building CoreFoundation on Darwin
 #
 # These make variables (or environment variables) are used
@@ -20,6 +39,9 @@
 #	OTHER_CFLAGS	other flags to be passed to compiler
 #	RC_CFLAGS	more flags to be passed to compiler (build system)
 #	OTHER_LFLAGS	other flags to be passed to the link stage
+#
+# 9/3/2011 - MS - Changing Linux version of the app to build
+# 32-bit version.
 #
 
 CURRENT_PROJECT_VERSION = 299.33

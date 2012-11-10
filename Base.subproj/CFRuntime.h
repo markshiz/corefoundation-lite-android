@@ -21,6 +21,10 @@
  * limitations under the License.
  * 
  * @APPLE_LICENSE_HEADER_END@
+ *
+ * 9/3/2011 MS - changed __CFRuntimeBase definition so items are 
+ * ordered wrt big endian and little endian vs. power PC and i386.
+ *
  */
 /*	CFRuntime.h
 	Copyright (c) 1999-2003, Apple, Inc. All rights reserved.

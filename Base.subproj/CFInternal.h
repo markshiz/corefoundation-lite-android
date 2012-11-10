@@ -21,6 +21,11 @@
  * limitations under the License.
  * 
  * @APPLE_LICENSE_HEADER_END@
+ *
+ * 9/3/2011 MS - Altered HALT definitions to support 64-bit/i386 for GLU C 
+ * and MSVC and arm processors. Changed CONST_STRING_DECL defines from 
+ * PPC/i386 to be __BIG_ENDIAN__ and __LITTLE_ENDIAN__.
+ *
  */
 /*	CFInternal.h
 	Copyright (c) 1998-2003, Apple, Inc. All rights reserved.

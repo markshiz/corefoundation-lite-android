@@ -94,6 +94,8 @@ CF_EXPORT void _CFMachPortInstallNotifyPort(CFRunLoopRef rl, CFStringRef mode);
 #endif
 #if defined(__arm__)
     #define HALT do {asm __volatile__("bkpt 0xCF"); kill(getpid(), 9); } while (0)
+#elif defined(__aarch64__)
+    #define HALT do {asm __volatile__("brk 0xCF"); kill(getpid(), 9); } while (0)
 #endif
 
 #if defined(DEBUG)
